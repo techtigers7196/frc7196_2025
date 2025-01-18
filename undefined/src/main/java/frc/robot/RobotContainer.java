@@ -7,6 +7,7 @@ package frc.robot;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.subsystems.SwerveSubsystem;
 import swervelib.SwerveInputStream;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -38,14 +39,21 @@ public class RobotContainer {
                                                                 () -> driverXbox.getLeftX() * -1)
                                                             .withControllerRotationAxis(driverXbox::getRightX)
                                                             .deadband(OperatorConstants.DEADBAND)
-                                                            .scaleTranslation(0.8);
+                                                            .scaleTranslation(0.8)
+                                                            .allianceRelativeControl(false);
+
+  Command driveFieldOrientedAngularVelocity = drivebase.driveFieldOrientedCommand(driveAngularVelocity);
 
   // Applies deadbands and inverts controls because joysticks
   // are back-right positive while robot
   // controls are front-left positive
   // left stick controls translation
   // right stick controls the angular velocity of the robot
-  Command driveFieldOrientedAnglularVelocity = drivebase.driveFieldOriented(driveAngularVelocity);
+  Command driveFieldOrientedDirectAngle = drivebase.driveCommand(
+    () -> MathUtil.applyDeadband(driverXbox.getLeftX() * -1, OperatorConstants.DEADBAND),
+    () -> MathUtil.applyDeadband(driverXbox.getLeftY() * -1, OperatorConstants.LEFT_Y_DEADBAND), 
+    () -> driverXbox.getRightX(),
+    () -> driverXbox.getRightY());
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -66,7 +74,7 @@ public class RobotContainer {
    */
   private void configureBindings() {
     //Schedule command
-    drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity);
+    drivebase.setDefaultCommand(driveFieldOrientedAngularVelocity);
   }
 
   /**

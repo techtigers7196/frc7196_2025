@@ -24,8 +24,6 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
-  private final CommandXboxController m_driverController =
-      new CommandXboxController(OperatorConstants.kDriverControllerPort);
 
   private final SwerveSubsystem drivebase  = new SwerveSubsystem();
 
@@ -37,7 +35,7 @@ public class RobotContainer {
   SwerveInputStream driveAngularVelocity = SwerveInputStream.of(drivebase.getSwerveDrive(),
                                                                 () -> driverXbox.getLeftY() * -1,
                                                                 () -> driverXbox.getLeftX() * -1)
-                                                            .withControllerRotationAxis(driverXbox::getRightX)
+                                                            .withControllerRotationAxis(() -> driverXbox.getRightX()*-1)
                                                             .deadband(OperatorConstants.DEADBAND)
                                                             .scaleTranslation(0.8)
                                                             .allianceRelativeControl(false);
@@ -50,8 +48,8 @@ public class RobotContainer {
   // left stick controls translation
   // right stick controls the angular velocity of the robot
   Command driveFieldOrientedDirectAngle = drivebase.driveCommand(
-    () -> MathUtil.applyDeadband(driverXbox.getLeftX() * -1, OperatorConstants.DEADBAND),
-    () -> MathUtil.applyDeadband(driverXbox.getLeftY() * -1, OperatorConstants.LEFT_Y_DEADBAND), 
+    () -> MathUtil.applyDeadband(driverXbox.getLeftY() * -1, OperatorConstants.DEADBAND),
+    () -> MathUtil.applyDeadband(driverXbox.getLeftX() * -1, OperatorConstants.LEFT_Y_DEADBAND), 
     () -> driverXbox.getRightX(),
     () -> driverXbox.getRightY());
 

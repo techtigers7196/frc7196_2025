@@ -46,7 +46,7 @@ public class SwerveSubsystem extends SubsystemBase {
    */
   public Command driveCommand(DoubleSupplier translationX, DoubleSupplier translationY, DoubleSupplier headingX, DoubleSupplier headingY)
   {
-    return run(() -> {
+    return this.run(() -> {
       // Make the robot move
       Translation2d scaledInputs = SwerveMath.scaleTranslation(new Translation2d(translationX.getAsDouble(),
                                                                                 translationY.getAsDouble()), 0.5);
@@ -66,7 +66,7 @@ public class SwerveSubsystem extends SubsystemBase {
   }
 
   public Command driveFieldOrientedCommand(Supplier<ChassisSpeeds> velocity) {
-    return run(() -> {
+    return this.run(() -> {
       swerveDrive.driveFieldOriented(velocity.get());
     });
   }

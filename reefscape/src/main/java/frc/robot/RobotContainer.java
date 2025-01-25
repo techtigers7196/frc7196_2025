@@ -11,6 +11,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
@@ -50,8 +51,8 @@ public class RobotContainer {
   Command driveFieldOrientedDirectAngle = drivebase.driveCommand(
     () -> MathUtil.applyDeadband(driverXbox.getLeftY() * -1, OperatorConstants.DEADBAND),
     () -> MathUtil.applyDeadband(driverXbox.getLeftX() * -1, OperatorConstants.LEFT_Y_DEADBAND), 
-    () -> driverXbox.getRightX(),
-    () -> driverXbox.getRightY());
+    () -> driverXbox.getRightX() *-1,
+    () -> driverXbox.getRightY()*- 1);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -71,8 +72,15 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    //Schedule command
+    //Set default drive style
     drivebase.setDefaultCommand(driveFieldOrientedAngularVelocity);
+
+    //Update drive style to angular velocity
+    driverXbox.a().onTrue(driveFieldOrientedAngularVelocity);
+
+    //Update drive style to direct angle
+    driverXbox.b().onTrue(driveFieldOrientedDirectAngle);
+
   }
 
   /**

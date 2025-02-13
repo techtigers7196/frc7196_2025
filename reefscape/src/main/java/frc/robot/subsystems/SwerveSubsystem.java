@@ -45,8 +45,6 @@ public class SwerveSubsystem extends SubsystemBase {
       throw new RuntimeException(e);
     }
 
-    
-
     // Load the RobotConfig from the GUI settings. You should probably
     // store this in your Constants file
     RobotConfig config;
@@ -81,13 +79,10 @@ public class SwerveSubsystem extends SubsystemBase {
       // Handle exception as needed
       e.printStackTrace();
     }
-
-    
-
   }
 
   /**
-   * Angu;ar velocity drive command.
+   * Angular velocity drive command.
    *
    * @return a command
    */

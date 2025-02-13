@@ -1,0 +1,54 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 4.974,
+        "y": 5.566
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 4.085249999999999,
+        "y": 6.51125
+      },
+      "isLocked": true,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 1.49,
+        "y": 7.33
+      },
+      "prevControl": {
+        "x": 2.6347304147278434,
+        "y": 6.711519590046459
+      },
+      "nextControl": null,
+      "isLocked": true,
+      "linkedName": null
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": -53.83418766497381
+  },
+  "reversed": false,
+  "folder": "L4 coral auto steps B.A B",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": -119.73390088705113
+  },
+  "useDefaultConstraints": true
+}

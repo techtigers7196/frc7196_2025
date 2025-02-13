@@ -1,0 +1,73 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "L1 5th"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "L1 6th"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "L1 5th"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "L1 6th"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "L1 5th"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "L1 6th"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "L1 5th"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "L1 6th"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "L1 5th"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "L1 6th"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": "L4 auto 21-28 points",
+  "choreoAuto": false
+}

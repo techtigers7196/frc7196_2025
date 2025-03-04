@@ -40,6 +40,7 @@ public class SwerveSubsystem extends SubsystemBase {
     try
     {
       swerveDrive = new SwerveParser(swerveJsonDirectory).createSwerveDrive(Constants.MAX_SPEED);
+      //swerveDrive.getGyro().setOffset(swerveDrive.getGyroRotation3d().unaryMinus());
     } catch (Exception e)
     {
       throw new RuntimeException(e);

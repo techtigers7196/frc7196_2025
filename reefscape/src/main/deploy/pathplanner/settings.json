@@ -6,11 +6,13 @@
     "L1 4 corals step B.A R",
     "L1 auto steps B.A B",
     "L4 coral auto steps B.A B",
-    "L4 coral auto steps B.A R"
+    "L4 coral auto steps B.A R",
+    "forward"
   ],
   "autoFolders": [
-    "L1 auto ",
-    "L4 auto 21-28 points"
+    "L1 autos ",
+    "L4 autos",
+    "simple autos"
   ],
   "defaultMaxVel": 3.0,
   "defaultMaxAccel": 3.0,
@@ -37,8 +39,8 @@
   "bumperOffsetX": 0.0,
   "bumperOffsetY": 0.0,
   "robotFeatures": [
-    "{\"name\":\"Line\",\"type\":\"line\",\"data\":{\"start\":{\"x\":0.38,\"y\":0.2},\"end\":{\"x\":0.2,\"y\":0.2},\"strokeWidth\":0.02}}",
-    "{\"name\":\"Line\",\"type\":\"line\",\"data\":{\"start\":{\"x\":-0.15,\"y\":0.2},\"end\":{\"x\":-0.38,\"y\":0.2},\"strokeWidth\":0.02}}",
-    "{\"name\":\"Circle\",\"type\":\"circle\",\"data\":{\"center\":{\"x\":-0.225,\"y\":0.2},\"radius\":0.1,\"strokeWidth\":0.02,\"filled\":false}}"
+    "{\"name\":\"Line\",\"type\":\"line\",\"data\":{\"start\":{\"x\":0.38,\"y\":0.0},\"end\":{\"x\":0.2,\"y\":0.0},\"strokeWidth\":0.02}}",
+    "{\"name\":\"Line\",\"type\":\"line\",\"data\":{\"start\":{\"x\":-0.15,\"y\":0.0},\"end\":{\"x\":-0.38,\"y\":0.0},\"strokeWidth\":0.02}}",
+    "{\"name\":\"Circle\",\"type\":\"circle\",\"data\":{\"center\":{\"x\":-0.225,\"y\":0.0},\"radius\":0.1,\"strokeWidth\":0.02,\"filled\":false}}"
   ]
 }

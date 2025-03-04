@@ -18,7 +18,6 @@ import swervelib.math.Matter;
  */
 public final class Constants
 {
-
   public static final double ROBOT_MASS = (148 - 20.3) * 0.453592; // 32lbs * kg per pound
   public static final Matter CHASSIS    = new Matter(new Translation3d(0, 0, Units.inchesToMeters(8)), ROBOT_MASS);
   public static final double LOOP_TIME  = 0.13; //s, 20ms + 110ms sprk max velocity lag
@@ -48,5 +47,32 @@ public final class Constants
     public static final double LEFT_Y_DEADBAND = 0.1;
     public static final double RIGHT_X_DEADBAND = 0.1;
     public static final double TURN_CONSTANT    = 6;
+  }
+
+  //Motor controller for elevator
+  public static final class ElevatorSubsystemConstants {
+    public static final int kelevatorMotorCanId = 9;
+  }
+
+  //Elevator heights variables 
+  public static final class ElevatorSetpoints {
+    public static final int kLevel1Intake = 0;
+    public static final int kLevel2 = 5;
+    public static final double kLevel3 = 12;
+    public static final double kLevel4 = 23;
+  }
+
+  public static final class ShootConstants{
+    public static final int kshootMotorCanId = 11;
+  //Shooting variables
+    public static double shootPower = 0.2;
+    public static double L1shootPower = 0.1;
+    public static double intakePower = -0.2;
+    // public static double shootPrevent = -0.3;
+    // public static double feedPower = 0.3;
+  }
+
+  public static final class OIConstants {
+    public static final double kTriggerButtonThreshold = 0.1;
   }
 }

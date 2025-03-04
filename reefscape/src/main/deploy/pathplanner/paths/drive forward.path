@@ -3,35 +3,47 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.567,
-        "y": 2.826
+        "x": 8.06325,
+        "y": 4.103
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.7775,
-        "y": 2.0067499999999994
+        "x": 8.571922194962232,
+        "y": 4.121465789121413
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 1.599,
-        "y": 0.6125
+        "x": 6.19125,
+        "y": 4.103
       },
       "prevControl": {
-        "x": 3.56494176287931,
-        "y": 1.7856558811515246
+        "x": 5.770595028640793,
+        "y": 4.103311709552854
       },
       "nextControl": null,
-      "isLocked": true,
+      "isLocked": false,
       "linkedName": null
     }
   ],
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "shoot",
+      "waypointRelativePos": 1.0,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "shoot"
+        }
+      }
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 3.0,
     "maxAcceleration": 3.0,
@@ -42,13 +54,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 53.42696902148067
+    "rotation": -179.41536947929484
   },
   "reversed": false,
-  "folder": "L4 coral auto steps B.A R",
+  "folder": "forward",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 120.9493388727119
+    "rotation": 179.5416435419996
   },
   "useDefaultConstraints": true
 }

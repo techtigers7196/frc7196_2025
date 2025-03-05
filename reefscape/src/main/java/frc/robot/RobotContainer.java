@@ -116,10 +116,7 @@ public class RobotContainer {
   
       //Y button sets the elevator to Level 4
       supportXbox.y().onTrue(elevatorSubsystem.setSetpointCommand(Setpoint.kLevel4));
-  
-      // sets the elevator to the desired setpoint
-      supportXbox.rightBumper().onTrue(elevatorSubsystem.moveToSetpoint());
-  
+    
       //shoot the coral L2-L4
       driverXbox.rightTrigger(OIConstants.kTriggerButtonThreshold)
       .whileTrue(elevatorSubsystem.runShootCommand());

@@ -67,6 +67,7 @@ public final class Constants
     public static final double maxAcceleration = 6000;
     public static final double allowedClosedLoopError = 0.5;
 
+    public static final double intakeWidth = 12;
   }
 
   //Elevator heights variables 
@@ -79,10 +80,11 @@ public final class Constants
 
   public static final class ShootConstants{
     public static final int kshootMotorCanId = 11;
-  //Shooting variables
+    public static final int kCoralIntakeLimitSwitchPort = 0;
+    //Shooting variables
     public static double shootPower = 0.2;
     public static double L1shootPower = 0.1;
-    public static double intakePower = -0.2;
+    public static double intakePower = 0.2;
     // public static double shootPrevent = -0.3;
     // public static double feedPower = 0.3;
   }

@@ -57,9 +57,9 @@ public final class Constants
     public static final double kI = 0;
     public static final double kD = 0.08;
     public static final double kS = 0;
-    public static final double kG = 2.28;
-    public static final double kV = 3.07;
-    public static final double kA = 0.41;
+    public static final double kG = 1.12;
+    public static final double kV = 3.84;
+    public static final double kA = 0.14;
     public static final double velocityFF = 0.002114164905;
     public static final double outputRangeMin = -1;
     public static final double outputRangeMax = 1;

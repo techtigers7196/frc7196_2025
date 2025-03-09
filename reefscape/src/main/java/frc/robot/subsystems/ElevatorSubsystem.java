@@ -10,6 +10,7 @@ import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.config.LimitSwitchConfig.Type;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 
 //Libraries for motor controllers
 import com.revrobotics.RelativeEncoder;
@@ -27,6 +28,13 @@ import frc.robot.Constants.ShootConstants;
 
 //Smart Dashboard library 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
+//Libraries for Coral Intake Limit Switch 
+import edu.wpi.first.wpilibj.DigitalInput;
+
+//Libraries for Time of Flight Sensor
+import com.playingwithfusion.TimeOfFlight;
+import com.playingwithfusion.TimeOfFlight.RangingMode;
 
 public class ElevatorSubsystem extends SubsystemBase{
 
@@ -46,32 +54,34 @@ public class ElevatorSubsystem extends SubsystemBase{
 
   //shooting controllers 
   private SparkMax shootMotor = new SparkMax(ShootConstants.kshootMotorCanId,MotorType.kBrushless);
-  //private RelativeEncoder shootEncoder = shootMotor.getEncoder();
+  
+  private DigitalInput coralIntakeLimitSwitch = new DigitalInput(ShootConstants.kCoralIntakeLimitSwitchPort);
+  private TimeOfFlight coralTimeOfFlight;
+
+
 
   // Member variables for subsystem state management
   //   private boolean wasResetByButton = false;
   //   private boolean wasResetByLimit = false;
   private double elevatorCurrentTarget = ElevatorSetpoints.kLevel1Intake;
   ElevatorFeedforward feedforward = new ElevatorFeedforward(ElevatorSubsystemConstants.kS, 
-  ElevatorSubsystemConstants.kG,
-  ElevatorSubsystemConstants.kV,
-  ElevatorSubsystemConstants.kA
+    ElevatorSubsystemConstants.kG,
+    ElevatorSubsystemConstants.kV,
+    ElevatorSubsystemConstants.kA
   );
+
+  private TrapezoidProfile.Constraints constraints;
+  private TrapezoidProfile.State goalState;
+  private TrapezoidProfile.State nextState;
+  private TrapezoidProfile profile;
 
   //sets the PID VALUES
   public ElevatorSubsystem(){
     // Configure basic settings of the elevator motor
     elevatorConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(50).voltageCompensation(12);
 
-    /*
-    * Configure the reverse limit switch for the elevator. By enabling the limit switch, this
-    * will prevent any actuation of the elevator in the reverse direction if the limit switch is
-    * pressed.
-    */
-    //elevatorConfig
-    //       .limitSwitch
-    //       .reverseLimitSwitchEnabled(true)
-    //       .reverseLimitSwitchType(Type.kNormallyOpen);
+    // coralTimeOfFlight = new TimeOfFlight(ShootConstants.kcoralTimeOfFlightPort);
+    // coralTimeOfFlight.setRangingMode(RangingMode.Short, 24);
 
     /*
     * Configure the closed loop controller. We want to make sure we set the
@@ -96,11 +106,16 @@ public class ElevatorSubsystem extends SubsystemBase{
           ResetMode.kResetSafeParameters,
           PersistMode.kPersistParameters);
 
-          // Configure basic settings of the intake motor
-          //shootConfig.inverted(true).idleMode(IdleMode.kBrake).smartCurrentLimit(40);
-
           // Zero elevator encoders on initialization
           elevatorEncoder.setPosition(0);
+
+    constraints = new TrapezoidProfile.Constraints(
+      ElevatorSubsystemConstants.maxVelocity,
+      ElevatorSubsystemConstants.maxAcceleration);
+    nextState = new TrapezoidProfile.State(0,0);
+    goalState = new TrapezoidProfile.State(0,0);
+    profile = new TrapezoidProfile(constraints);
+
   }
 
   /** Set the intake motor power in the range of [-1, 1]. */
@@ -109,16 +124,19 @@ public class ElevatorSubsystem extends SubsystemBase{
   }
 
   public void moveToSetpoint() {
+    // Update the state for motion profile towards target over the next 20ms
+    nextState = profile.calculate(0.020, nextState, goalState);
+
     elevatorClosedLoopController.setReference(elevatorCurrentTarget, ControlType.kMAXMotionPositionControl);
     // elevatorClosedLoopController.setReference(elevatorCurrentTarget, 
     //   ControlType.kMAXMotionPositionControl,
     //   ClosedLoopSlot.kSlot0, 
-    //   feedforward.calculate(ElevatorSubsystemConstants.maxVelocity)
+    //   feedforward.calculate(nextState.velocity)
     //   );
   }
 
-  // public void setelevatorPosition(double position) {
-  //     elevatorPID.setReference(position, SparkMax.ControlType.kPosition);
+  // public double getDistance(){
+  //   return coralTimeOfFlight.getRange();
   // }
 
   public Command setSetpointCommand(Setpoint setpoint) {
@@ -138,7 +156,34 @@ public class ElevatorSubsystem extends SubsystemBase{
               elevatorCurrentTarget = ElevatorSetpoints.kLevel4;
               break;
           }
+          
+          goalState = new TrapezoidProfile.State(elevatorCurrentTarget,0);
         });
+  }
+
+  //command tto shoot the coral if there is a coral loaded, if not, motor will not run.
+  public Command runShootCommandWithSwitch(){
+    return this.runOnce(
+      ()-> this.setShootPower(ShootConstants.shootPower)
+    ).until(
+      ()-> coralIntakeLimitSwitch.get() == false
+    ).unless(
+      ()-> coralIntakeLimitSwitch.get() == false
+    )
+    .andThen(
+      ()-> this.setShootPower(0)
+    );
+  }
+
+  //Sets the motor on, once the Coral hits the swith the motor will stop the intake
+  public Command intakeCommandWithSwitch(){
+    return this.runOnce(
+      ()-> this.setShootPower(ShootConstants.intakePower)
+    ).until(
+      ()-> coralIntakeLimitSwitch.get() == true
+    ).andThen(
+      ()-> this.setShootPower(0)
+    );
   }
 
    /**
@@ -155,6 +200,12 @@ public class ElevatorSubsystem extends SubsystemBase{
    * released, the motor will stop.
    */
   public Command reverseIntakeCommand() {
+    return this.startEnd(
+        () -> this.setShootPower(-ShootConstants.intakePower), () -> this.setShootPower(0.0));
+  }
+
+  //Command to itake the coral regardless of the limit switch
+  public Command intakeCommand() {
     return this.startEnd(
         () -> this.setShootPower(ShootConstants.intakePower), () -> this.setShootPower(0.0));
   }

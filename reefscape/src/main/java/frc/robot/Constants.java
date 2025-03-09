@@ -53,19 +53,20 @@ public final class Constants
   public static final class ElevatorSubsystemConstants {
     public static final int kelevatorMotorCanId = 9;
 
-    public static final double kP = 0.2;
+    public static final double kP = 0.2;  //0.2
     public static final double kI = 0;
-    public static final double kD = 0.08;
-    public static final double kS = 0;
-    public static final double kG = 2.28;
-    public static final double kV = 3.07;
-    public static final double kA = 0.41;
-    public static final double velocityFF = 0.002114164905;
+    public static final double kD = 0.8;  //0.8
+    public static final double kS = 0;  //0
+    public static final double kG = 1.12;  //2.28
+    public static final double kV = 3.84; //3.07
+    public static final double kA = 0.14;  //0.41
+    public static final double velocityFF = 0.002114164905;   //0.002114164905
     public static final double outputRangeMin = -1;
     public static final double outputRangeMax = 1;
     public static final double maxVelocity = 4200;
     public static final double maxAcceleration = 6000;
     public static final double allowedClosedLoopError = 0.5;
+    public static final double intakeWidth = 300;
 
   }
 
@@ -79,15 +80,29 @@ public final class Constants
 
   public static final class ShootConstants{
     public static final int kshootMotorCanId = 11;
+    public static final int kCoralIntakeLimitSwitchPort = 0;
+    public static final int kcoralTimeOfFlightPort = 0;
   //Shooting variables
     public static double shootPower = 0.2;
     public static double L1shootPower = 0.1;
-    public static double intakePower = -0.2;
+    public static double intakePower = 0.2;
     // public static double shootPrevent = -0.3;
     // public static double feedPower = 0.3;
   }
 
   public static final class OIConstants {
     public static final double kTriggerButtonThreshold = 0.1;
+  }
+
+  public static final class AlignmentConstants{
+    public static final double kPSwerveAlignX = 0.01;
+    public static final double kPSwerveAlignZ = 0.01;
+    public static final double kPSwerveAlignTheta = 0.01;
+
+    public static final double kPSwerveAlign2DStrafe = 0.05;
+    public static final double kPSwerveAlign2DForward = 0.15; 
+    public static final double ktxTargetRight = -16;
+    public static final double ktyTarget = -14;
+    public static final double ktxTargetLeft = 16;
   }
 }

@@ -8,6 +8,7 @@ import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
+import frc.robot.subsystems.VisionSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem.Setpoint;
 import swervelib.SwerveInputStream;
 
@@ -27,7 +28,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.ShootConstants;
 import com.pathplanner.lib.auto.NamedCommands;
-
+import frc.robot.Constants.AlignmentConstants;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -39,6 +40,7 @@ public class RobotContainer {
     // The robot's subsystems and commands are defined here...
     private final SwerveSubsystem drivebase  = new SwerveSubsystem();
     private final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();
+    private final VisionSubsystem visionSubsystem = new VisionSubsystem();
   
     final CommandXboxController driverXbox = new CommandXboxController(0);
     final CommandXboxController supportXbox = new CommandXboxController(1);
@@ -138,6 +140,10 @@ public class RobotContainer {
 
       //intakes the coral a bit
       supportXbox.leftBumper().whileTrue(elevatorSubsystem.reverseIntakeCommand());
+
+      driverXbox.povRight().onTrue(drivebase.moveToTag2DCommand(AlignmentConstants.ktxTargetRight, AlignmentConstants.ktyTarget, visionSubsystem));
+
+      driverXbox.povLeft().onTrue(drivebase.moveToTag2DCommand(AlignmentConstants.ktxTargetLeft, AlignmentConstants.ktyTarget, visionSubsystem));
     }
   
   /**

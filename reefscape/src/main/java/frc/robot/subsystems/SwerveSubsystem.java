@@ -16,21 +16,27 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.reduxrobotics.frames.DoubleFrame.DoubleToType;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import swervelib.parser.SwerveParser;
 import swervelib.telemetry.SwerveDriveTelemetry;
 import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
 import swervelib.SwerveDrive;
 import swervelib.math.SwerveMath;
+import frc.robot.Constants.AlignmentConstants;
 
 public class SwerveSubsystem extends SubsystemBase {
   
   private final SwerveDrive  swerveDrive;
+  private double strafeError;
+  private double forwardError;
+  private double feedforward = 0.01;
   
   /** Creates a new SwerveSubsystem. */
   public SwerveSubsystem(){
@@ -114,6 +120,91 @@ public class SwerveSubsystem extends SubsystemBase {
     });
   }
 
+  public Command alignToTagCommand(VisionSubsystem vision)
+  {
+    return this.run(() -> {
+      boolean isDefault = true;
+      double[] pose = vision.getCameraPose();
+
+      for(double value : pose){
+        if(value !=0.0){
+          isDefault = false;
+          break;
+        }
+      }
+
+      if (!isDefault)
+      {
+        double dtheta = pose[4];
+        ChassisSpeeds desiredSpeeds = new ChassisSpeeds(0,0, -AlignmentConstants.kPSwerveAlignTheta*dtheta);
+        this.driveFieldOriented(desiredSpeeds);
+      }
+    });
+  }
+
+  public Command moveToTagCommand(double yOffset, VisionSubsystem vision)
+  {
+    return this.run(() -> {
+
+      boolean isDefault = true;
+      double[] pose = vision.getCameraPose();
+
+      for(double value : pose){
+        if(value !=0.0){
+          isDefault = false;
+          break;
+        }
+      }
+
+      if (!isDefault)
+      {
+        double dz = pose[2];
+        double dx = yOffset - pose[0];
+        ChassisSpeeds desiredSpeeds = new ChassisSpeeds(-AlignmentConstants.kPSwerveAlignZ*dz, AlignmentConstants.kPSwerveAlignX*dx,0);
+        this.driveFieldOriented(desiredSpeeds);
+      }
+    });
+  }
+
+  public Command moveToTag2DCommand (double txTarget, double tyTarget, VisionSubsystem vision){
+    return this.run(()->{
+      //read values form Limelight
+      double[] xya = vision.getXYA();
+      double tx = xya[0];
+      double ty = xya[1];
+      double ta = xya[2];
+
+      if(ta !=0.0){
+        strafeError = tx - txTarget;
+        forwardError = ty - tyTarget;
+
+        double forward = -AlignmentConstants.kPSwerveAlign2DForward * forwardError;
+        double strafe = -AlignmentConstants.kPSwerveAlign2DStrafe * strafeError;
+
+        if(Math.abs(strafeError) < 1){
+          if (strafeError < 0 ){
+            strafe = strafe+feedforward;
+          } else {
+            strafe = strafe-feedforward;
+          }
+        }
+
+        if(Math.abs(forwardError) < 1){
+          if (forwardError < 0 ){
+            forward = forward+feedforward;
+          } else {
+            forward = forward-feedforward;
+          }
+        }
+
+        ChassisSpeeds desiredSpeeds = new ChassisSpeeds(forward, strafe, 0);
+        this.driveFieldOriented(desiredSpeeds);
+      }
+    }).until(
+      () -> Math.abs(strafeError) < 0.15 && Math.abs(forwardError) < 0.4
+      );
+  }
+
   //set the gyro to zero
   public void zeroGyro()
   {
@@ -165,6 +256,8 @@ public class SwerveSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    SmartDashboard.putNumber("Strafe", strafeError);
+    SmartDashboard.putNumber("Forward", forwardError);
   }
 
   @Override

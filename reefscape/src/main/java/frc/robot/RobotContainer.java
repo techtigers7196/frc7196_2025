@@ -6,6 +6,8 @@ package frc.robot;
 
 import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.subsystems.ClimbSubsystem;
+import frc.robot.subsystems.AlgeaSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
@@ -30,6 +32,7 @@ import frc.robot.Constants.ShootConstants;
 import com.pathplanner.lib.auto.NamedCommands;
 import frc.robot.Constants.AlignmentConstants;
 
+
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
@@ -41,6 +44,10 @@ public class RobotContainer {
     private final SwerveSubsystem drivebase  = new SwerveSubsystem();
     private final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();
     private final VisionSubsystem visionSubsystem = new VisionSubsystem();
+    private final ClimbSubsystem climbSubsystem = new ClimbSubsystem();
+    private final AlgeaSubsystem algeaSubsystem = new AlgeaSubsystem();
+
+
   
     final CommandXboxController driverXbox = new CommandXboxController(0);
     final CommandXboxController supportXbox = new CommandXboxController(1);
@@ -141,9 +148,17 @@ public class RobotContainer {
       //intakes the coral a bit
       supportXbox.leftBumper().whileTrue(elevatorSubsystem.reverseIntakeCommand());
 
-      driverXbox.povRight().onTrue(drivebase.moveToTag2DCommand(AlignmentConstants.ktxTargetRight, AlignmentConstants.ktyTarget, visionSubsystem));
+      driverXbox.povRight().onTrue(drivebase.moveToTag2DRightCommand(visionSubsystem));
 
-      driverXbox.povLeft().onTrue(drivebase.moveToTag2DCommand(AlignmentConstants.ktxTargetLeft, AlignmentConstants.ktyTarget, visionSubsystem));
+      driverXbox.povLeft().onTrue(drivebase.moveToTag2DLeftCommand(visionSubsystem));
+
+      supportXbox.povUp().whileTrue(climbSubsystem.climbCommand());
+
+      supportXbox.povDown().whileTrue(climbSubsystem.climbDownCommand());
+
+      supportXbox.povLeft().whileTrue(algeaSubsystem.algeaUpCommand());
+
+      supportXbox.povRight().whileTrue(algeaSubsystem.algeaDownCommand());
     }
   
   /**

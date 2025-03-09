@@ -13,9 +13,9 @@ public class VisionSubsystem {
     private  NetworkTableEntry ta = table.getEntry("ta");
 
     private  NetworkTable tableRight = NetworkTableInstance.getDefault().getTable("limelight-right");
-    private  NetworkTableEntry txRight = table.getEntry("tx");
-    private  NetworkTableEntry tyRight = table.getEntry("ty");
-    private  NetworkTableEntry taRight = table.getEntry("ta");
+    private  NetworkTableEntry txRight = tableRight.getEntry("tx");
+    private  NetworkTableEntry tyRight = tableRight.getEntry("ty");
+    private  NetworkTableEntry taRight = tableRight.getEntry("ta");
 
     public double[] getXYA()
     {

@@ -36,7 +36,6 @@ public class SwerveSubsystem extends SubsystemBase {
   private final SwerveDrive  swerveDrive;
   private double strafeError;
   private double forwardError;
-  private double feedforward = 0.01;
   
   /** Creates a new SwerveSubsystem. */
   public SwerveSubsystem(){
@@ -137,17 +136,17 @@ public class SwerveSubsystem extends SubsystemBase {
 
         if(Math.abs(strafeError) < 1){
           if (strafeError < 0 ){
-            strafe = strafe+feedforward;
+            strafe = strafe+AlignmentConstants.feedforward;
           } else {
-            strafe = strafe-feedforward;
+            strafe = strafe-AlignmentConstants.feedforward;
           }
         }
 
         if(Math.abs(forwardError) < 1){
           if (forwardError < 0 ){
-            forward = forward+feedforward;
+            forward = forward+AlignmentConstants.feedforward;
           } else {
-            forward = forward-feedforward;
+            forward = forward-AlignmentConstants.feedforward;
           }
         }
 
@@ -159,7 +158,7 @@ public class SwerveSubsystem extends SubsystemBase {
       );
   }
 
-  public ChassisSpeeds calChassisSpeeds(double[] xya) {
+  public ChassisSpeeds calcChassisSpeeds(double[] xya) {
       double tx = xya[0];
       double ta = xya[2];
 
@@ -171,9 +170,9 @@ public class SwerveSubsystem extends SubsystemBase {
 
         if(Math.abs(strafeError) < 1){
           if (strafeError < 0 ){
-            strafe = strafe+feedforward;
+            strafe = strafe+AlignmentConstants.feedforward;
           } else {
-            strafe = strafe-feedforward;
+            strafe = strafe-AlignmentConstants.feedforward;
           }
         }
 
@@ -187,20 +186,20 @@ public class SwerveSubsystem extends SubsystemBase {
     return this.run(()->{
       //read values form Limelight
       double[] xya = vision.getXYARight();
-      this.driveFieldOriented(this.calChassisSpeeds(xya));
+      this.driveFieldOriented(this.calcChassisSpeeds(xya));
     }).until(
-      () -> Math.abs(strafeError) < 0.15 && Math.abs(forwardError) < 0.4
-      );
+      () -> Math.abs(strafeError) < 0.15
+      ).andThen(this.moveToTag2DCommand(0, 2, vision));
   }
 
   public Command moveToTag2DRightCommand (VisionSubsystem vision){
     return this.run(()->{
       //read values form Limelight
       double[] xya = vision.getXYA();
-      this.driveFieldOriented(this.calChassisSpeeds(xya));
+      this.driveFieldOriented(this.calcChassisSpeeds(xya));
     }).until(
-      () -> Math.abs(strafeError) < 0.15 && Math.abs(forwardError) < 0.4
-      );
+      () -> Math.abs(strafeError) < 0.15
+      ).andThen(this.moveToTag2DCommand(0, 0, vision));
   }
 
   //set the gyro to zero

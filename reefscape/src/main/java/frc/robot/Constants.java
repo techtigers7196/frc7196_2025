@@ -99,10 +99,23 @@ public final class Constants
     public static final double kPSwerveAlignZ = 0.01;
     public static final double kPSwerveAlignTheta = 0.01;
 
-    public static final double kPSwerveAlign2DStrafe = 0.05;
-    public static final double kPSwerveAlign2DForward = 0.15; 
+    public static final double kPSwerveAlign2DStrafe = 0.075;
+    public static final double kPSwerveAlign2DForward = 0.1; //.15
+    public static final double feedforward = 0.01;
     public static final double ktxTargetRight = -16;
     public static final double ktyTarget = -14;
     public static final double ktxTargetLeft = 16;
+  }
+     
+  public static final class Algea{
+    public static final int kalgeaMotorCanId = 12;
+    public static final double kalgeaUpPower = 0.1;  //?
+    public static final double kalgeaDownPOwer = -0.1; //?
+  }
+
+  public static final class Climb{
+    public static final int kclimbMotorCanId = 13;
+    public static final double kclimbPower = 0.2;
+    public static final double kclimbDownPower = -0.2;
   }
 }

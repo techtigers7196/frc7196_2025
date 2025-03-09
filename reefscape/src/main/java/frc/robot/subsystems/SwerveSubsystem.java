@@ -120,52 +120,6 @@ public class SwerveSubsystem extends SubsystemBase {
     });
   }
 
-  public Command alignToTagCommand(VisionSubsystem vision)
-  {
-    return this.run(() -> {
-      boolean isDefault = true;
-      double[] pose = vision.getCameraPose();
-
-      for(double value : pose){
-        if(value !=0.0){
-          isDefault = false;
-          break;
-        }
-      }
-
-      if (!isDefault)
-      {
-        double dtheta = pose[4];
-        ChassisSpeeds desiredSpeeds = new ChassisSpeeds(0,0, -AlignmentConstants.kPSwerveAlignTheta*dtheta);
-        this.driveFieldOriented(desiredSpeeds);
-      }
-    });
-  }
-
-  public Command moveToTagCommand(double yOffset, VisionSubsystem vision)
-  {
-    return this.run(() -> {
-
-      boolean isDefault = true;
-      double[] pose = vision.getCameraPose();
-
-      for(double value : pose){
-        if(value !=0.0){
-          isDefault = false;
-          break;
-        }
-      }
-
-      if (!isDefault)
-      {
-        double dz = pose[2];
-        double dx = yOffset - pose[0];
-        ChassisSpeeds desiredSpeeds = new ChassisSpeeds(-AlignmentConstants.kPSwerveAlignZ*dz, AlignmentConstants.kPSwerveAlignX*dx,0);
-        this.driveFieldOriented(desiredSpeeds);
-      }
-    });
-  }
-
   public Command moveToTag2DCommand (double txTarget, double tyTarget, VisionSubsystem vision){
     return this.run(()->{
       //read values form Limelight
@@ -200,6 +154,50 @@ public class SwerveSubsystem extends SubsystemBase {
         ChassisSpeeds desiredSpeeds = new ChassisSpeeds(forward, strafe, 0);
         this.driveFieldOriented(desiredSpeeds);
       }
+    }).until(
+      () -> Math.abs(strafeError) < 0.15 && Math.abs(forwardError) < 0.4
+      );
+  }
+
+  public ChassisSpeeds calChassisSpeeds(double[] xya) {
+      double tx = xya[0];
+      double ta = xya[2];
+
+      ChassisSpeeds desiredSpeeds = new ChassisSpeeds(0,0,0);
+
+      if(ta !=0.0){
+        strafeError = tx;
+        double strafe = -AlignmentConstants.kPSwerveAlign2DStrafe * strafeError;
+
+        if(Math.abs(strafeError) < 1){
+          if (strafeError < 0 ){
+            strafe = strafe+feedforward;
+          } else {
+            strafe = strafe-feedforward;
+          }
+        }
+
+        desiredSpeeds = new ChassisSpeeds(0, strafe, 0);
+      }
+
+      return desiredSpeeds;
+  }
+
+  public Command moveToTag2DLeftCommand (VisionSubsystem vision){
+    return this.run(()->{
+      //read values form Limelight
+      double[] xya = vision.getXYARight();
+      this.driveFieldOriented(this.calChassisSpeeds(xya));
+    }).until(
+      () -> Math.abs(strafeError) < 0.15 && Math.abs(forwardError) < 0.4
+      );
+  }
+
+  public Command moveToTag2DRightCommand (VisionSubsystem vision){
+    return this.run(()->{
+      //read values form Limelight
+      double[] xya = vision.getXYA();
+      this.driveFieldOriented(this.calChassisSpeeds(xya));
     }).until(
       () -> Math.abs(strafeError) < 0.15 && Math.abs(forwardError) < 0.4
       );

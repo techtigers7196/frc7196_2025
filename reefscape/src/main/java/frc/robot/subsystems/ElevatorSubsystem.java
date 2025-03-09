@@ -135,9 +135,9 @@ public class ElevatorSubsystem extends SubsystemBase{
     //   );
   }
 
-  // public double getDistance(){
-  //   return coralTimeOfFlight.getRange();
-  // }
+  public double getDistance(){
+    return coralTimeOfFlight.getRange();
+  }
 
   public Command setSetpointCommand(Setpoint setpoint) {
     return this.runOnce(
@@ -223,6 +223,7 @@ public class ElevatorSubsystem extends SubsystemBase{
   public void periodic(){
     SmartDashboard.putNumber("Coral/Elevator/Target Position", elevatorCurrentTarget);
     SmartDashboard.putNumber("Coral/Elevator/Actual Position", elevatorEncoder.getPosition());
+    //SmartDashboard.putNumber("Coral/Shooter/TOFDist", this.getDistance());
     moveToSetpoint();
   }
 }

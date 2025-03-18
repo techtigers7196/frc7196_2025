@@ -1,7 +1,10 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
@@ -10,6 +13,7 @@ import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.config.LimitSwitchConfig.Type;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 
 //Libraries for motor controllers
@@ -33,6 +37,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.DigitalInput;
 
 //Libraries for Time of Flight Sensor
+//https://www.playingwithfusion.com/frc/playingwithfusion2025.json
 import com.playingwithfusion.TimeOfFlight;
 import com.playingwithfusion.TimeOfFlight.RangingMode;
 
@@ -50,7 +55,16 @@ public class ElevatorSubsystem extends SubsystemBase{
   private SparkClosedLoopController elevatorClosedLoopController = elevatorMotor.getClosedLoopController();
   private RelativeEncoder elevatorEncoder = elevatorMotor.getEncoder();
   private final SparkMaxConfig elevatorConfig = new SparkMaxConfig();
-  //public static final SparkMaxConfig shootConfig = new SparkMaxConfig();
+  public static final SparkMaxConfig shootConfig = new SparkMaxConfig();
+
+//PID variables for manual PID
+private final double kP = 0.2;
+private final double kI = 0;
+private final double kD = 0.08;
+private final double kfeedforward = 0.003;
+
+//PID controller
+private final PIDController pid = new PIDController(kP, kI, kD);
 
   //shooting controllers 
   private SparkMax shootMotor = new SparkMax(ShootConstants.kshootMotorCanId,MotorType.kBrushless);
@@ -79,9 +93,12 @@ public class ElevatorSubsystem extends SubsystemBase{
   public ElevatorSubsystem(){
     // Configure basic settings of the elevator motor
     elevatorConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(50).voltageCompensation(12);
+    shootConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(30).voltageCompensation(12);
 
-    // coralTimeOfFlight = new TimeOfFlight(ShootConstants.kcoralTimeOfFlightPort);
-    // coralTimeOfFlight.setRangingMode(RangingMode.Short, 24);
+
+    coralTimeOfFlight = new TimeOfFlight(ShootConstants.kcoralTimeOfFlightPort);
+    coralTimeOfFlight.setRangingMode(RangingMode.Short, 24);
+  
 
     /*
     * Configure the closed loop controller. We want to make sure we set the
@@ -101,13 +118,18 @@ public class ElevatorSubsystem extends SubsystemBase{
         .maxAcceleration(ElevatorSubsystemConstants.maxAcceleration)
         .allowedClosedLoopError(ElevatorSubsystemConstants.allowedClosedLoopError);
 
-        elevatorMotor.configure(
-          elevatorConfig,
-          ResetMode.kResetSafeParameters,
-          PersistMode.kPersistParameters);
+    elevatorMotor.configure(
+      elevatorConfig,
+      ResetMode.kResetSafeParameters,
+      PersistMode.kPersistParameters);
 
-          // Zero elevator encoders on initialization
-          elevatorEncoder.setPosition(0);
+    // Zero elevator encoders on initialization
+    elevatorEncoder.setPosition(0);
+
+    shootMotor.configure(
+      shootConfig,
+      ResetMode.kResetSafeParameters,
+      PersistMode.kPersistParameters);
 
     constraints = new TrapezoidProfile.Constraints(
       ElevatorSubsystemConstants.maxVelocity,
@@ -123,20 +145,31 @@ public class ElevatorSubsystem extends SubsystemBase{
     shootMotor.set(power);
   }
 
-  public void moveToSetpoint() {
-    // Update the state for motion profile towards target over the next 20ms
-    nextState = profile.calculate(0.020, nextState, goalState);
-
+  public void moveToSetpointMaxMotion() {
     elevatorClosedLoopController.setReference(elevatorCurrentTarget, ControlType.kMAXMotionPositionControl);
-    // elevatorClosedLoopController.setReference(elevatorCurrentTarget, 
-    //   ControlType.kMAXMotionPositionControl,
-    //   ClosedLoopSlot.kSlot0, 
-    //   feedforward.calculate(nextState.velocity)
-    //   );
+  }
+
+  public void moveToSetpointPID(){
+    double pidValue = pid.calculate(elevatorEncoder.getPosition(),elevatorCurrentTarget);
+    double power = kfeedforward+pidValue;
+    elevatorMotor.set(power);
   }
 
   public double getDistance(){
     return coralTimeOfFlight.getRange();
+  }
+
+  public boolean hasCoralInElevatorPath() {
+    if(this.getDistance() < ElevatorSubsystemConstants.intakeWidth && elevatorEncoder.getPosition() < 0.5){
+      return true;
+    }
+
+    return false;
+  }
+
+  public boolean isCoralLoaded() {
+    // return !this.coralIntakeLimitSwitch.get() && !this.hasCoralInElevatorPath();
+    return !this.coralIntakeLimitSwitch.get() && !this.hasCoralInElevatorPath();
   }
 
   public Command setSetpointCommand(Setpoint setpoint) {
@@ -158,29 +191,30 @@ public class ElevatorSubsystem extends SubsystemBase{
           }
           
           goalState = new TrapezoidProfile.State(elevatorCurrentTarget,0);
-        });
+        }).unless(() -> this.hasCoralInElevatorPath());
   }
 
-  //command tto shoot the coral if there is a coral loaded, if not, motor will not run.
+  //command to shoot the coral if there is a coral loaded, if not, motor will not run.
   public Command runShootCommandWithSwitch(){
-    return this.runOnce(
+    return Commands.parallel(this.run(
       ()-> this.setShootPower(ShootConstants.shootPower)
     ).until(
-      ()-> coralIntakeLimitSwitch.get() == false
-    ).unless(
-      ()-> coralIntakeLimitSwitch.get() == false
-    )
+      () -> !this.isCoralLoaded()
+    ), new WaitCommand(0.5))
     .andThen(
       ()-> this.setShootPower(0)
     );
   }
 
+  // ParallelCommandGroup
+  // raceCommandGroup name = new raceCommandGroup(new waitCOmmand(1), other command)
+
   //Sets the motor on, once the Coral hits the swith the motor will stop the intake
   public Command intakeCommandWithSwitch(){
-    return this.runOnce(
+    return this.run(
       ()-> this.setShootPower(ShootConstants.intakePower)
     ).until(
-      ()-> coralIntakeLimitSwitch.get() == true
+      () -> this.isCoralLoaded()
     ).andThen(
       ()-> this.setShootPower(0)
     );
@@ -223,8 +257,10 @@ public class ElevatorSubsystem extends SubsystemBase{
   public void periodic(){
     SmartDashboard.putNumber("Coral/Elevator/Target Position", elevatorCurrentTarget);
     SmartDashboard.putNumber("Coral/Elevator/Actual Position", elevatorEncoder.getPosition());
-    //SmartDashboard.putNumber("Coral/Shooter/TOFDist", this.getDistance());
-    moveToSetpoint();
+    SmartDashboard.putNumber("Coral/Shooter/TOFDist", this.getDistance());
+    SmartDashboard.putBoolean("Coral/Shooter/BlockingElevator", this.hasCoralInElevatorPath());
+    SmartDashboard.putBoolean("Coral/Shooter/IsLoaded", this.isCoralLoaded());
+    moveToSetpointMaxMotion();
   }
 }
 

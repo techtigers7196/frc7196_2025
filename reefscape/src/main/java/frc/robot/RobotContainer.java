@@ -7,7 +7,8 @@ package frc.robot;
 import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.subsystems.ClimbSubsystem;
-import frc.robot.subsystems.AlgeaSubsystem;
+import frc.robot.subsystems.AlgaeSubsystem;
+import frc.robot.subsystems.AlgaeSubsystem.Setpoints;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
@@ -45,9 +46,7 @@ public class RobotContainer {
     private final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();
     private final VisionSubsystem visionSubsystem = new VisionSubsystem();
     private final ClimbSubsystem climbSubsystem = new ClimbSubsystem();
-    private final AlgeaSubsystem algeaSubsystem = new AlgeaSubsystem();
-
-
+    private final AlgaeSubsystem algaeSubsystem = new AlgaeSubsystem();
   
     final CommandXboxController driverXbox = new CommandXboxController(0);
     final CommandXboxController supportXbox = new CommandXboxController(1);
@@ -82,6 +81,16 @@ public class RobotContainer {
     public RobotContainer() {
       // Configure the trigger bindings
       configureBindings();
+
+      NamedCommands.registerCommand("moveToL3", elevatorSubsystem.setSetpointCommand(Setpoint.kLevel3));
+      NamedCommands.registerCommand("moveToL4", elevatorSubsystem.setSetpointCommand(Setpoint.kLevel4));
+      NamedCommands.registerCommand("moveToL1", elevatorSubsystem.setSetpointCommand(Setpoint.kLevel1Intake));
+      NamedCommands.registerCommand("shoot", elevatorSubsystem.runShootCommandWithSwitch());
+      NamedCommands.registerCommand("intake", elevatorSubsystem.intakeCommandWithSwitch());
+      NamedCommands.registerCommand("AlignRight", drivebase.moveToTag2DRightCommand(visionSubsystem));
+
+
+
       
       // Build an auto chooser. This will use Commands.none() as the default option.
       autoChooser = AutoBuilder.buildAutoChooser();
@@ -136,17 +145,17 @@ public class RobotContainer {
 
       //shoot the coral into L1
       driverXbox.leftTrigger(OIConstants.kTriggerButtonThreshold)
-      .whileTrue(elevatorSubsystem.L1shootCommand());
+      .onTrue(elevatorSubsystem.intakeCommand());
 
       //shoot the coral into L1
       supportXbox.leftTrigger(OIConstants.kTriggerButtonThreshold)
-      .whileTrue(elevatorSubsystem.L1shootCommand());
+      .onTrue(elevatorSubsystem.intakeCommandWithSwitch());
 
       //intakes the coral a  bit 
-      driverXbox.leftBumper().whileTrue(elevatorSubsystem.reverseIntakeCommand());
+      supportXbox.leftBumper().whileTrue(elevatorSubsystem.intakeCommand());
 
       //intakes the coral a bit
-      supportXbox.leftBumper().whileTrue(elevatorSubsystem.reverseIntakeCommand());
+      // supportXbox.leftBumper().whileTrue(elevatorSubsystem.reverseIntakeCommand());
 
       driverXbox.povRight().onTrue(drivebase.moveToTag2DRightCommand(visionSubsystem));
 
@@ -156,9 +165,23 @@ public class RobotContainer {
 
       supportXbox.povDown().whileTrue(climbSubsystem.climbDownCommand());
 
-      supportXbox.povLeft().whileTrue(algeaSubsystem.algeaUpCommand());
+      // supportXbox.povLeft().whileTrue(algaeSubsystem.algaeUpCommand());
 
-      supportXbox.povRight().whileTrue(algeaSubsystem.algeaDownCommand());
+      // supportXbox.povRight().whileTrue(algaeSubsystem.algaeDownCommand());
+
+      //the inatkes retracts for endgame
+      // supportXbox.rightBumper().and(supportXbox.back()).whileTrue(climbSubsystem.retractIntake());
+
+      // supportXbox.leftBumper().and(supportXbox.back()).whileTrue(climbSubsystem.unretractIntake());
+
+      //left bumper moves the algae arm  to starting position
+      driverXbox.leftBumper().onTrue(algaeSubsystem.setSetpointCommand(Setpoints.kalgae1));
+  
+      //right bumper moves the algae arm to second setpoint
+      driverXbox.rightBumper().onTrue(algaeSubsystem.setSetpointCommand(Setpoints.kalgae2));
+  
+      //right bumper moves the algae arm to third/highest setpoint
+      driverXbox.back().onTrue(algaeSubsystem.setSetpointCommand(Setpoints.kalgae0));
     }
   
   /**

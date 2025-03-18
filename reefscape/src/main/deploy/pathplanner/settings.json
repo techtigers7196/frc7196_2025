@@ -3,23 +3,22 @@
   "robotLength": 0.75,
   "holonomicMode": true,
   "pathFolders": [
-    "L1 4 corals step B.A R",
-    "L1 auto steps B.A B",
-    "L4 coral auto steps B.A B",
-    "L4 coral auto steps B.A R",
-    "forward"
+    "L4 auto steps B.A B",
+    "L4 auto steps B.A R",
+    "L4 vision B.A B",
+    "L4 vision B.A R"
   ],
   "autoFolders": [
     "L1 autos ",
-    "L4 autos",
-    "simple autos"
+    "L4 autos ",
+    "L4 vision "
   ],
   "defaultMaxVel": 3.0,
   "defaultMaxAccel": 3.0,
   "defaultMaxAngVel": 540.0,
   "defaultMaxAngAccel": 720.0,
   "defaultNominalVoltage": 12.0,
-  "robotMass": 18.1437,
+  "robotMass": 50.3,
   "robotMOI": 1.701,
   "robotTrackwidth": 0.546,
   "driveWheelRadius": 0.048,

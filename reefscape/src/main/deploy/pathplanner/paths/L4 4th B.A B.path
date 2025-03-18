@@ -3,28 +3,28 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.0,
-        "y": 7.0
+        "x": 1.5929301096450141,
+        "y": 7.457317581196151
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.0,
-        "y": 7.0
+        "x": 2.4372346351401752,
+        "y": 6.614248089186754
       },
-      "isLocked": false,
+      "isLocked": true,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 4.0,
-        "y": 6.0
+        "x": 3.51787638701785,
+        "y": 5.541483690374762
       },
       "prevControl": {
-        "x": 3.0,
-        "y": 6.0
+        "x": 3.176055513505217,
+        "y": 5.846950299800004
       },
       "nextControl": null,
-      "isLocked": false,
+      "isLocked": true,
       "linkedName": null
     }
   ],
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": -60.224382274734744
   },
   "reversed": false,
-  "folder": "L1 4 corals step B.A R",
+  "folder": "L4 auto steps B.A B",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": -53.392925187392464
   },
   "useDefaultConstraints": true
 }

@@ -7,19 +7,25 @@
         {
           "type": "path",
           "data": {
-            "pathName": "drive forward"
+            "pathName": "L4 1st B.A B"
           }
         },
         {
           "type": "wait",
           "data": {
-            "waitTime": 3.0
+            "waitTime": 0
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "L4 2nd B.A B"
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": "simple autos",
+  "folder": "L4 autos ",
   "choreoAuto": false
 }

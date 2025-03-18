@@ -41,7 +41,7 @@ public class SwerveSubsystem extends SubsystemBase {
   public SwerveSubsystem(){
     File swerveJsonDirectory = new File(Filesystem.getDeployDirectory(),"swerve");
     
-    SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
+    SwerveDriveTelemetry.verbosity = TelemetryVerbosity.LOW;
     try
     {
       swerveDrive = new SwerveParser(swerveJsonDirectory).createSwerveDrive(Constants.MAX_SPEED);
@@ -119,10 +119,16 @@ public class SwerveSubsystem extends SubsystemBase {
     });
   }
 
-  public Command moveToTag2DCommand (double txTarget, double tyTarget, VisionSubsystem vision){
+  public Command moveToTag2DCommand (double txTarget, double tyTarget, VisionSubsystem vision, boolean right){
     return this.run(()->{
+      double[] xya;
+      //if aligning to the right we need to use the left LL and viceversa
+      if(right){
+        xya = vision.getXYA();
+      } else {
+        xya= vision.getXYARight();
+      }
       //read values form Limelight
-      double[] xya = vision.getXYA();
       double tx = xya[0];
       double ty = xya[1];
       double ta = xya[2];
@@ -131,8 +137,8 @@ public class SwerveSubsystem extends SubsystemBase {
         strafeError = tx - txTarget;
         forwardError = ty - tyTarget;
 
-        double forward = -AlignmentConstants.kPSwerveAlign2DForward * forwardError;
-        double strafe = -AlignmentConstants.kPSwerveAlign2DStrafe * strafeError;
+        double forward = -AlignmentConstants.kPForward * forwardError;
+        double strafe = -AlignmentConstants.kPStrafe * strafeError;
 
         if(Math.abs(strafeError) < 1){
           if (strafeError < 0 ){
@@ -151,14 +157,14 @@ public class SwerveSubsystem extends SubsystemBase {
         }
 
         ChassisSpeeds desiredSpeeds = new ChassisSpeeds(forward, strafe, 0);
-        this.driveFieldOriented(desiredSpeeds);
+        swerveDrive.drive(desiredSpeeds);
       }
     }).until(
-      () -> Math.abs(strafeError) < 0.15 && Math.abs(forwardError) < 0.4
+      () -> Math.abs(strafeError) < AlignmentConstants.strafeTolerance && Math.abs(forwardError) < AlignmentConstants.forwardTolerance
       );
   }
 
-  public ChassisSpeeds calcChassisSpeeds(double[] xya) {
+  public ChassisSpeeds calcStrafeChassisSpeeds(double[] xya) {
       double tx = xya[0];
       double ta = xya[2];
 
@@ -166,7 +172,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
       if(ta !=0.0){
         strafeError = tx;
-        double strafe = -AlignmentConstants.kPSwerveAlign2DStrafe * strafeError;
+        double strafe = -AlignmentConstants.kPStrafe * strafeError;
 
         if(Math.abs(strafeError) < 1){
           if (strafeError < 0 ){
@@ -184,22 +190,24 @@ public class SwerveSubsystem extends SubsystemBase {
 
   public Command moveToTag2DLeftCommand (VisionSubsystem vision){
     return this.run(()->{
-      //read values form Limelight
+      //read values from the right Limelight
       double[] xya = vision.getXYARight();
-      this.driveFieldOriented(this.calcChassisSpeeds(xya));
+      swerveDrive.drive(this.calcStrafeChassisSpeeds(xya));
     }).until(
-      () -> Math.abs(strafeError) < 0.15
-      ).andThen(this.moveToTag2DCommand(0, 2, vision));
+      () -> Math.abs(strafeError) < AlignmentConstants.strafeTolerance
+      ).andThen(this.moveToTag2DCommand(0, 2, vision, false
+      ));
   }
 
   public Command moveToTag2DRightCommand (VisionSubsystem vision){
     return this.run(()->{
-      //read values form Limelight
+      //read values from the left Limelight
       double[] xya = vision.getXYA();
-      this.driveFieldOriented(this.calcChassisSpeeds(xya));
+      swerveDrive.drive(this.calcStrafeChassisSpeeds(xya));
     }).until(
-      () -> Math.abs(strafeError) < 0.15
-      ).andThen(this.moveToTag2DCommand(0, 0, vision));
+      () -> Math.abs(strafeError) < AlignmentConstants.strafeTolerance
+      ).andThen(this.moveToTag2DCommand(0, 2, vision, true
+      ));
   }
 
   //set the gyro to zero

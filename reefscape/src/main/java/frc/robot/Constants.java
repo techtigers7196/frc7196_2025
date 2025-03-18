@@ -55,18 +55,18 @@ public final class Constants
 
     public static final double kP = 0.2;  //0.2
     public static final double kI = 0;
-    public static final double kD = 0.8;  //0.8
+    public static final double kD = 0.08;  //0.08
     public static final double kS = 0;  //0
     public static final double kG = 1.12;  //2.28
     public static final double kV = 3.84; //3.07
     public static final double kA = 0.14;  //0.41
-    public static final double velocityFF = 0.002114164905;   //0.002114164905
+    public static final double velocityFF = 0.003;   //0.002114164905
     public static final double outputRangeMin = -1;
     public static final double outputRangeMax = 1;
     public static final double maxVelocity = 4200;
     public static final double maxAcceleration = 6000;
     public static final double allowedClosedLoopError = 0.5;
-    public static final double intakeWidth = 300;
+    public static final double intakeWidth = 250;
 
   }
 
@@ -74,7 +74,7 @@ public final class Constants
   public static final class ElevatorSetpoints {
     public static final int kLevel1Intake = 0;
     public static final int kLevel2 = 5;
-    public static final double kLevel3 = 12;
+    public static final double kLevel3 = 12.5;
     public static final double kLevel4 = 23;
   }
 
@@ -85,7 +85,7 @@ public final class Constants
   //Shooting variables
     public static double shootPower = 0.2;
     public static double L1shootPower = 0.1;
-    public static double intakePower = 0.2;
+    public static double intakePower = 0.1;
     // public static double shootPrevent = -0.3;
     // public static double feedPower = 0.3;
   }
@@ -95,27 +95,32 @@ public final class Constants
   }
 
   public static final class AlignmentConstants{
-    public static final double kPSwerveAlignX = 0.01;
-    public static final double kPSwerveAlignZ = 0.01;
-    public static final double kPSwerveAlignTheta = 0.01;
-
-    public static final double kPSwerveAlign2DStrafe = 0.075;
-    public static final double kPSwerveAlign2DForward = 0.1; //.15
-    public static final double feedforward = 0.01;
-    public static final double ktxTargetRight = -16;
-    public static final double ktyTarget = -14;
-    public static final double ktxTargetLeft = 16;
+    public static final double kPStrafe = 0.075;
+    public static final double kPForward = 0.05; //.15
+    public static final double feedforward = 0.02; //.01
+    public static final double strafeTolerance = 1;
+    public static final double forwardTolerance = 0.4;
   }
      
-  public static final class Algea{
-    public static final int kalgeaMotorCanId = 12;
-    public static final double kalgeaUpPower = 0.1;  //?
-    public static final double kalgeaDownPOwer = -0.1; //?
+  public static final class Algae{
+    public static final int kalgaeMotorCanId = 12;
+    public static final double kalgaeUpPower = 0.1;  //?
+    public static final double kalgaeDownPOwer = -0.1; //?
+    public static final double kalgae0 = 0;
+    public static final double kalgae1 = 2.3;
+    public static final double kalgae2 = 5.4;
+
   }
 
   public static final class Climb{
     public static final int kclimbMotorCanId = 13;
-    public static final double kclimbPower = 0.2;
+    public static final double kclimbPower = 0.35;
     public static final double kclimbDownPower = -0.2;
   }
+
+  public static final class winch{
+    public static final int kwinchMotorCanId = 14;
+  }
+    
+  
 }

@@ -16,15 +16,15 @@
     },
     {
       "anchor": {
-        "x": 5.43013056785216,
-        "y": 2.578770239936903
+        "x": 5.5185,
+        "y": 2.5527499999999996
       },
       "prevControl": {
-        "x": 6.10288056785216,
-        "y": 2.208270239936902
+        "x": 6.19125,
+        "y": 2.182249999999999
       },
       "nextControl": null,
-      "isLocked": true,
+      "isLocked": false,
       "linkedName": null
     }
   ],
@@ -42,7 +42,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 121.33980057434597
+    "rotation": 120.07672806183139
   },
   "reversed": false,
   "folder": "L4 vision B.A R",

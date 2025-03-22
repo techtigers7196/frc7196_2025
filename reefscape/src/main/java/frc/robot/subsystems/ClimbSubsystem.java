@@ -39,7 +39,7 @@ public class ClimbSubsystem extends SubsystemBase{
 
     public Command retractIntake() {
         return this.startEnd(
-        () -> winchMotor.set(-0.3), () -> winchMotor.set(0.0));
+        () -> winchMotor.set(-0.2), () -> winchMotor.set(0.0));
     }
 
     public Command unretractIntake() {

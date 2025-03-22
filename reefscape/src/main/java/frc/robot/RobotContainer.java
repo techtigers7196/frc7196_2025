@@ -155,11 +155,11 @@ public class RobotContainer {
       supportXbox.leftBumper().whileTrue(elevatorSubsystem.intakeCommand());
 
       //intakes the coral a bit
-      // supportXbox.leftBumper().whileTrue(elevatorSubsystem.reverseIntakeCommand());
+      supportXbox.rightBumper().whileTrue(elevatorSubsystem.reverseIntakeCommand());
 
       driverXbox.povRight().onTrue(drivebase.moveToTag2DRightCommand(visionSubsystem));
 
-      driverXbox.povLeft().onTrue(drivebase.moveToTag2DLeftCommand(visionSubsystem));
+      driverXbox.x().onTrue(drivebase.moveToTag2DLeftCommand(visionSubsystem));
 
       supportXbox.povUp().whileTrue(climbSubsystem.climbCommand());
 
@@ -170,9 +170,9 @@ public class RobotContainer {
       // supportXbox.povRight().whileTrue(algaeSubsystem.algaeDownCommand());
 
       //the inatkes retracts for endgame
-      // supportXbox.rightBumper().and(supportXbox.back()).whileTrue(climbSubsystem.retractIntake());
+      supportXbox.povLeft().and(supportXbox.back()).whileTrue(climbSubsystem.retractIntake());
 
-      // supportXbox.leftBumper().and(supportXbox.back()).whileTrue(climbSubsystem.unretractIntake());
+      supportXbox.povLeft().and(supportXbox.start()).whileTrue(climbSubsystem.unretractIntake());
 
       //left bumper moves the algae arm  to starting position
       driverXbox.leftBumper().onTrue(algaeSubsystem.setSetpointCommand(Setpoints.kalgae1));

@@ -48,7 +48,7 @@
   "folder": "L4 auto steps B.A B",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -53.392925187392464
+    "rotation": -53.39292518739247
   },
   "useDefaultConstraints": true
 }

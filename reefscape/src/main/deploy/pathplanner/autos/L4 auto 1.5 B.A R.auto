@@ -17,9 +17,52 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "moveToL4"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "L4 2nd B.A R"
+          }
+        },
+        {
+          "type": "sequential",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "shoot"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 1.0
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "moveToL1"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "L4 3rd B.A R"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "intake"
           }
         }
       ]

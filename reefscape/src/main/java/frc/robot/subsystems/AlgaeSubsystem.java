@@ -28,7 +28,7 @@ public class AlgaeSubsystem extends SubsystemBase {
     private RelativeEncoder algaeEncoder = algaeMotor.getEncoder();
 
     //PID variables for manual PID
-    private final double kP = 0.1;
+    private final double kP = 0.15;
     private final double kI = 0;
     private final double kD = 0;
     private final double kfeedforward = 0.003;

@@ -115,7 +115,7 @@ public final class Constants
   public static final class Climb{
     public static final int kclimbMotorCanId = 13;
     public static final double kclimbPower = 0.35;
-    public static final double kclimbDownPower = -0.2;
+    public static final double kclimbDownPower = -0.40;
   }
 
   public static final class winch{

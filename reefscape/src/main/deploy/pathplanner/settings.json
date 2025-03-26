@@ -6,10 +6,10 @@
     "L4 auto steps B.A B",
     "L4 auto steps B.A R",
     "L4 vision B.A B",
-    "L4 vision B.A R"
+    "L4 vision B.A R",
+    "Drive forward L4"
   ],
   "autoFolders": [
-    "L1 autos ",
     "L4 autos ",
     "L4 vision "
   ],

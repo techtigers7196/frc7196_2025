@@ -65,6 +65,8 @@ public class RobotContainer {
                                                               .allianceRelativeControl(false);
   
     Command driveFieldOrientedAngularVelocity = drivebase.driveFieldOrientedCommand(driveAngularVelocity);
+
+    Command driveRobotOrientedAngularVelocity = drivebase.driveRobotOriented(driveAngularVelocity);
   
     // Applies deadbands and inverts controls because joysticks
     // are back-right positive while robot
@@ -119,6 +121,9 @@ public class RobotContainer {
   
       //Update drive style to direct angle
       driverXbox.b().onTrue(driveFieldOrientedDirectAngle);
+
+      //Update drive style to robot oriented angular velocity
+      driverXbox.x().onTrue(driveRobotOrientedAngularVelocity);
   
       //sets the gyro to zero
       driverXbox.y().onTrue(Commands.runOnce(drivebase::zeroGyro));
@@ -137,7 +142,7 @@ public class RobotContainer {
     
       //shoot the coral L2-L4
       driverXbox.rightTrigger(OIConstants.kTriggerButtonThreshold)
-      .whileTrue(elevatorSubsystem.runShootCommand());
+      .onTrue(drivebase.alignToTag2DRightCommand(visionSubsystem));
 
       //shoot the coral L2-L4
       supportXbox.rightTrigger(OIConstants.kTriggerButtonThreshold)
@@ -145,7 +150,7 @@ public class RobotContainer {
 
       //shoot the coral into L1
       driverXbox.leftTrigger(OIConstants.kTriggerButtonThreshold)
-      .onTrue(elevatorSubsystem.intakeCommand());
+      .onTrue(drivebase.alignToTag2DLeftCommand(visionSubsystem));
 
       //shoot the coral into L1
       supportXbox.leftTrigger(OIConstants.kTriggerButtonThreshold)
@@ -159,7 +164,7 @@ public class RobotContainer {
 
       driverXbox.povRight().onTrue(drivebase.moveToTag2DRightCommand(visionSubsystem));
 
-      driverXbox.x().onTrue(drivebase.moveToTag2DLeftCommand(visionSubsystem));
+      driverXbox.povLeft().onTrue(drivebase.moveToTag2DLeftCommand(visionSubsystem));
 
       supportXbox.povUp().whileTrue(climbSubsystem.climbCommand());
 

@@ -7,13 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "1st vision B.A B"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.5
+            "pathName": "L4 1st B.A R"
           }
         },
         {
@@ -21,34 +15,40 @@
           "data": {
             "commands": [
               {
-                "type": "named",
-                "data": {
-                  "name": "moveToL4"
-                }
-              },
-              {
                 "type": "wait",
                 "data": {
                   "waitTime": 0.5
                 }
               },
               {
-                "type": "race",
+                "type": "named",
                 "data": {
-                  "commands": [
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "AlignRight"
-                      }
-                    },
-                    {
-                      "type": "wait",
-                      "data": {
-                        "waitTime": 2.0
-                      }
-                    }
-                  ]
+                  "name": "moveToL4"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 1.0
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "L4 2nd B.A R"
+          }
+        },
+        {
+          "type": "sequential",
+          "data": {
+            "commands": [
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 0.5
                 }
               },
               {
@@ -60,7 +60,7 @@
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 0.5
+                  "waitTime": 1.0
                 }
               },
               {
@@ -76,6 +76,6 @@
     }
   },
   "resetOdom": true,
-  "folder": "L4 vision ",
+  "folder": "L4 autos ",
   "choreoAuto": false
 }

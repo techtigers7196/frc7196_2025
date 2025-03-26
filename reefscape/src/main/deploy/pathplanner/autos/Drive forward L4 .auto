@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "L4 1st B.A R"
+            "pathName": "L4 DF 1st "
           }
         },
         {
@@ -17,21 +17,21 @@
           }
         },
         {
-          "type": "named",
-          "data": {
-            "name": "moveToL4"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "L4 2nd B.A R"
-          }
-        },
-        {
           "type": "sequential",
           "data": {
             "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "moveToL4"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 1.0
+                }
+              },
               {
                 "type": "named",
                 "data": {
@@ -51,18 +51,6 @@
                 }
               }
             ]
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "L4 3rd B.A R"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "intake"
           }
         }
       ]

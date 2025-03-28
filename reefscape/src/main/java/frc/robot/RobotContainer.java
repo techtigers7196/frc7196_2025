@@ -89,10 +89,7 @@ public class RobotContainer {
       NamedCommands.registerCommand("moveToL1", elevatorSubsystem.setSetpointCommand(Setpoint.kLevel1Intake));
       NamedCommands.registerCommand("shoot", elevatorSubsystem.runShootCommandWithSwitch());
       NamedCommands.registerCommand("intake", elevatorSubsystem.intakeCommandWithSwitch());
-      NamedCommands.registerCommand("AlignRight", drivebase.moveToTag2DRightCommand(visionSubsystem));
-
-
-
+      NamedCommands.registerCommand("AlignRight", drivebase.moveToTag2DCommand(visionSubsystem, true));
       
       // Build an auto chooser. This will use Commands.none() as the default option.
       autoChooser = AutoBuilder.buildAutoChooser();
@@ -142,7 +139,7 @@ public class RobotContainer {
     
       //shoot the coral L2-L4
       driverXbox.rightTrigger(OIConstants.kTriggerButtonThreshold)
-      .onTrue(drivebase.alignToTag2DRightCommand(visionSubsystem));
+      .onTrue(drivebase.alignToTag2DCommand(visionSubsystem, true));
 
       //shoot the coral L2-L4
       supportXbox.rightTrigger(OIConstants.kTriggerButtonThreshold)
@@ -150,7 +147,7 @@ public class RobotContainer {
 
       //shoot the coral into L1
       driverXbox.leftTrigger(OIConstants.kTriggerButtonThreshold)
-      .onTrue(drivebase.alignToTag2DLeftCommand(visionSubsystem));
+      .onTrue(drivebase.alignToTag2DCommand(visionSubsystem, false));
 
       //shoot the coral into L1
       supportXbox.leftTrigger(OIConstants.kTriggerButtonThreshold)
@@ -162,9 +159,9 @@ public class RobotContainer {
       //intakes the coral a bit
       supportXbox.rightBumper().whileTrue(elevatorSubsystem.reverseIntakeCommand());
 
-      driverXbox.povRight().onTrue(drivebase.moveToTag2DRightCommand(visionSubsystem));
+      driverXbox.povRight().onTrue(drivebase.moveToTag2DCommand(visionSubsystem, true));
 
-      driverXbox.povLeft().onTrue(drivebase.moveToTag2DLeftCommand(visionSubsystem));
+      driverXbox.povLeft().onTrue(drivebase.moveToTag2DCommand(visionSubsystem, false));
 
       supportXbox.povUp().whileTrue(climbSubsystem.climbCommand());
 
@@ -175,9 +172,9 @@ public class RobotContainer {
       // supportXbox.povRight().whileTrue(algaeSubsystem.algaeDownCommand());
 
       //the inatkes retracts for endgame
-      supportXbox.povLeft().and(supportXbox.back()).whileTrue(climbSubsystem.retractIntake());
+      supportXbox.back().whileTrue(elevatorSubsystem.retractIntake());
 
-      supportXbox.povLeft().and(supportXbox.start()).whileTrue(climbSubsystem.unretractIntake());
+      supportXbox.start().whileTrue(elevatorSubsystem.unretractIntake());
 
       //left bumper moves the algae arm  to starting position
       driverXbox.leftBumper().onTrue(algaeSubsystem.setSetpointCommand(Setpoints.kalgae1));
@@ -187,6 +184,8 @@ public class RobotContainer {
   
       //right bumper moves the algae arm to third/highest setpoint
       driverXbox.back().onTrue(algaeSubsystem.setSetpointCommand(Setpoints.kalgae0));
+
+      driverXbox.povUp().whileTrue(drivebase.moveToTagCommand(0.15,visionSubsystem));
     }
   
   /**

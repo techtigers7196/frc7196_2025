@@ -3,15 +3,17 @@
   "robotLength": 0.914,
   "holonomicMode": true,
   "pathFolders": [
+    "Drive forward L4",
     "L4 auto steps B.A B",
     "L4 auto steps B.A R",
     "L4 vision B.A B",
     "L4 vision B.A R",
-    "Drive forward L4"
+    "test"
   ],
   "autoFolders": [
     "L4 autos ",
-    "L4 vision "
+    "L4 vision ",
+    "test"
   ],
   "defaultMaxVel": 3.0,
   "defaultMaxAccel": 3.0,

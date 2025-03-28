@@ -100,6 +100,17 @@ public final class Constants
     public static final double feedforward = 0.02; //.01
     public static final double strafeTolerance = 1;
     public static final double forwardTolerance = 0.4;
+    public static final double kPSwerveAlignX = 1.5; 
+    public static final double kPSwerveAlignZ = 0.0; 
+    public static final double kPSwerveAlignTheta = 0.1; 
+    public static final double kXTarget = 0.0;
+    public static final double kYTarget = 10.0;
+    // Debounce for losing limelight
+    // Count in increments of 20ms
+    public static final int kNoVisionMax = 10;
+    //Debounce for reaching limelight goal
+    public static final int kGoalCountMax = 2;
+
   }
      
   public static final class Algae{
@@ -115,7 +126,7 @@ public final class Constants
   public static final class Climb{
     public static final int kclimbMotorCanId = 13;
     public static final double kclimbPower = 0.35;
-    public static final double kclimbDownPower = -0.40;
+    public static final double kclimbDownPower = -0.65;
   }
 
   public static final class winch{

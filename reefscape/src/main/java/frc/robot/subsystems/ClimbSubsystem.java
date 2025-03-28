@@ -12,14 +12,14 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.Climb;
-import frc.robot.Constants.winch;
+//import frc.robot.Constants.winch;
 
 public class ClimbSubsystem extends SubsystemBase{
 
      private SparkMax climbMotor = new SparkMax (Climb.kclimbMotorCanId, MotorType.kBrushless);
      private final SparkMaxConfig climbConfig = new SparkMaxConfig();
 
-     private SparkMax winchMotor = new SparkMax (winch.kwinchMotorCanId, MotorType.kBrushed);
+     //private SparkMax winchMotor = new SparkMax (winch.kwinchMotorCanId, MotorType.kBrushed);
 
      public ClimbSubsystem(){
         
@@ -37,15 +37,15 @@ public class ClimbSubsystem extends SubsystemBase{
         climbMotor.set(power);
     }
 
-    public Command retractIntake() {
-        return this.startEnd(
-        () -> winchMotor.set(-0.2), () -> winchMotor.set(0.0));
-    }
+    // public Command retractIntake() {
+    //     return this.startEnd(
+    //     () -> winchMotor.set(-0.2), () -> winchMotor.set(0.0));
+    // }
 
-    public Command unretractIntake() {
-        return this.startEnd(
-        () -> winchMotor.set(0.1), () -> winchMotor.set(0.0));
-    }
+    // public Command unretractIntake() {
+    //     return this.startEnd(
+    //     () -> winchMotor.set(0.1), () -> winchMotor.set(0.0));
+    // }
 
     public Command climbCommand(){
         return this.startEnd(

@@ -41,6 +41,9 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import com.playingwithfusion.TimeOfFlight;
 import com.playingwithfusion.TimeOfFlight.RangingMode;
 
+import frc.robot.Constants.winch;
+
+
 public class ElevatorSubsystem extends SubsystemBase{
 
   public enum Setpoint {
@@ -56,6 +59,8 @@ public class ElevatorSubsystem extends SubsystemBase{
   private RelativeEncoder elevatorEncoder = elevatorMotor.getEncoder();
   private final SparkMaxConfig elevatorConfig = new SparkMaxConfig();
   public static final SparkMaxConfig shootConfig = new SparkMaxConfig();
+
+  private SparkMax winchMotor = new SparkMax (winch.kwinchMotorCanId, MotorType.kBrushed);
 
 //PID variables for manual PID
 private final double kP = 0.2;
@@ -252,6 +257,16 @@ private final PIDController pid = new PIDController(kP, kI, kD);
     return this.startEnd(
         () -> this.setShootPower(ShootConstants.L1shootPower), () -> this.setShootPower(0.0));
   }
+
+  public Command retractIntake() {
+    return this.startEnd(
+    () -> winchMotor.set(-0.2), () -> winchMotor.set(0.0));
+}
+
+public Command unretractIntake() {
+    return this.startEnd(
+    () -> winchMotor.set(0.1), () -> winchMotor.set(0.0));
+}
 
   @Override
   public void periodic(){

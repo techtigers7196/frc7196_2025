@@ -14,11 +14,15 @@ public class VisionSubsystem {
     private  NetworkTableEntry tx = table.getEntry("tx");
     private  NetworkTableEntry ty = table.getEntry("ty");
     private  NetworkTableEntry ta = table.getEntry("ta");
+    private NetworkTableEntry tv = table.getEntry("tv");
+    private NetworkTableEntry tPose = table.getEntry("botpose_targetspace");
+
 
     private  NetworkTable tableRight = NetworkTableInstance.getDefault().getTable("limelight-right");
     private  NetworkTableEntry txRight = tableRight.getEntry("tx");
     private  NetworkTableEntry tyRight = tableRight.getEntry("ty");
     private  NetworkTableEntry taRight = tableRight.getEntry("ta");
+    private NetworkTableEntry tvRight = table.getEntry("tv");
 
     public double[] getXYA()
     {
@@ -36,11 +40,21 @@ public class VisionSubsystem {
         return new double[]{x, y, a};
     }
 
+    public double [] getCameraPose(){
+        return tPose.getDoubleArray(new double[6]);
+    }
 
-    // public void processMegatagVision(){
+
+    public boolean hasTarget()
+    {
+        return tv.getInteger(0) == 1 || tvRight.getInteger(0) == 1;
+    }
+    
+
+    // public void processMegatagVision(SwerveSubsystem swerveDrive){
     //     double [] botpose = table.getEntry("botpose").getDoubleArray(new double[6]);
-    //     double [] latency = table.getEntry("tl").getDouble(0)/1000.0;
-    //     boolean hasTarget = table.getEntry("tv").getBoolean(0) ==1;
+    //     double latency = table.getEntry("tl").getDouble(0) / 1000.0;
+    //     boolean hasTarget = table.getEntry("tv").getInteger(0) ==1;
 
     //     if (hasTarget && botpose.length >=6){
     //         Pose3d visionPose = new Pose3d(
@@ -55,10 +69,8 @@ public class VisionSubsystem {
 
     //         double timestamp = Timer.getFPGATimestamp() - latency;
 
-    //         swerveDrive.addVisionMeasurement(visionPose.toPose2d(), timestamp);
+    //         swerveDrive.getSwerveDrive().addVisionMeasurement(visionPose.toPose2d(), timestamp);
     //     }
-
-        
     // }
 
 }

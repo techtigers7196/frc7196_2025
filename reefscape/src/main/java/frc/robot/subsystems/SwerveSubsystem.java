@@ -8,6 +8,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
+import static edu.wpi.first.units.Units.MetersPerSecond;
+
 import java.io.File;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
@@ -43,7 +45,7 @@ public class SwerveSubsystem extends SubsystemBase {
   public SwerveSubsystem(){
     File swerveJsonDirectory = new File(Filesystem.getDeployDirectory(),"swerve");
     
-    SwerveDriveTelemetry.verbosity = TelemetryVerbosity.LOW;
+    SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
     try
     {
       swerveDrive = new SwerveParser(swerveJsonDirectory).createSwerveDrive(Constants.MAX_SPEED);
@@ -77,6 +79,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
             var alliance = DriverStation.getAlliance();
             if (alliance.isPresent()) {
+              System.out.println("Alliance: "+(alliance.get() == DriverStation.Alliance.Red));
               return alliance.get() == DriverStation.Alliance.Red;
             }
             return false;
@@ -90,7 +93,7 @@ public class SwerveSubsystem extends SubsystemBase {
   }
 
   /**
-   * Angular velocity drive command.
+   * Direct Angle  drive command.
    *
    * @return a command
    */
@@ -147,7 +150,7 @@ public class SwerveSubsystem extends SubsystemBase {
         strafeError = tx - txTarget;
         forwardError = ty + tyTarget;
 
-        double forward = -AlignmentConstants.kPForward * forwardError;
+        double forward = right ? -AlignmentConstants.kPForwardRight * forwardError : -AlignmentConstants.kPForwardLeft * forwardError;
         double strafe = -AlignmentConstants.kPStrafe * strafeError;
 
         if(Math.abs(strafe) < 1) strafe = strafe + Math.signum(strafe)*AlignmentConstants.feedforward;
@@ -202,16 +205,18 @@ public class SwerveSubsystem extends SubsystemBase {
 
   public Command moveToTag2DCommand (VisionSubsystem vision, boolean right){
     return this.alignToTag2DCommand(vision, right).andThen(
-      this.moveToPosition2DCommand(AlignmentConstants.kXTarget, AlignmentConstants.kYTarget, vision, right
-    ));
+      this.moveToPosition2DCommand(AlignmentConstants.kXTarget, right ? AlignmentConstants.kYTargetRight: AlignmentConstants.kYTargetLeft, vision, right).withTimeout(2)
+    ).andThen(
+      this.driveFieldOrientedCommand(()-> new ChassisSpeeds(1,0,0)).withTimeout(0.25)
+    );
   }
 
   public Command alignToTag2DCommand (VisionSubsystem vision, boolean right){
     return this.run(()->{
       //read values from the right Limelight
-      double[] xya = vision.getXYA();
+      double[] xya = vision.getXYARight();
       if(right) {
-        xya = vision.getXYARight();
+        xya = vision.getXYA();
       }
     
       swerveDrive.drive(this.calcStrafeChassisSpeeds(xya));
@@ -239,6 +244,10 @@ public class SwerveSubsystem extends SubsystemBase {
   {
     swerveDrive.zeroGyro();
   }
+
+  //public double alignHeading ()
+
+
 
   /**
    * Gets the swerve drive object.

@@ -96,15 +96,17 @@ public final class Constants
 
   public static final class AlignmentConstants{
     public static final double kPStrafe = 0.075;
-    public static final double kPForward = 0.05; //.15
-    public static final double feedforward = 0.02; //.01
-    public static final double strafeTolerance = 1;
+    public static final double kPForwardRight = 0.06; //.15
+    public static final double kPForwardLeft = 0.15; //.15
+    public static final double feedforward = 0.01; //.01
+    public static final double strafeTolerance = 0.8;
     public static final double forwardTolerance = 0.4;
     public static final double kPSwerveAlignX = 1.5; 
     public static final double kPSwerveAlignZ = 0.0; 
     public static final double kPSwerveAlignTheta = 0.1; 
     public static final double kXTarget = 0.0;
-    public static final double kYTarget = 10.0;
+    public static final double kYTargetRight = 3.5;
+    public static final double kYTargetLeft = 5.0;
     // Debounce for losing limelight
     // Count in increments of 20ms
     public static final int kNoVisionMax = 10;
@@ -126,6 +128,7 @@ public final class Constants
   public static final class Climb{
     public static final int kclimbMotorCanId = 13;
     public static final double kclimbPower = 0.35;
+
     public static final double kclimbDownPower = -0.65;
   }
 

@@ -50,6 +50,37 @@ public class VisionSubsystem {
         return tv.getInteger(0) == 1 || tvRight.getInteger(0) == 1;
     }
     
+    public double calTargetAngle(int anything)
+    {
+        switch (anything){
+            default:
+                return -1;
+            case 6: //red reef
+                return 60;
+            case 7: //red reef
+                return 0;
+            case 8: //red reef
+                return 300;
+            case 9: //red reef
+                return 240;
+            case 10: //red reef
+                return 180;
+            case 11: //red reef
+                return 120;
+            case 17: //blue reef
+                return 300;
+            case 18: //blue reef
+                return 0;
+            case 19: //blue reef
+                return 60;
+            case 20: //blue reef
+                return 120;
+            case 21: //blue reef
+                return 180;
+            case 22: //blue reef
+                return 240;
+        }
+    }
 
     // public void processMegatagVision(SwerveSubsystem swerveDrive){
     //     double [] botpose = table.getEntry("botpose").getDoubleArray(new double[6]);

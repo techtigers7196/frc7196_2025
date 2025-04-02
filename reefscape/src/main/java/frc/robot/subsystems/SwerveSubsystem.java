@@ -151,7 +151,7 @@ public class SwerveSubsystem extends SubsystemBase {
         forwardError = ty + tyTarget;
 
         double forward = right ? -AlignmentConstants.kPForwardRight * forwardError : -AlignmentConstants.kPForwardLeft * forwardError;
-        double strafe = -AlignmentConstants.kPStrafe * strafeError;
+        double strafe =  right ? -AlignmentConstants.kPStrafeRight * strafeError : -AlignmentConstants.kPStrafeLeft * strafeError;
 
         if(Math.abs(strafe) < 1) strafe = strafe + Math.signum(strafe)*AlignmentConstants.feedforward;
         if(Math.abs(forward) < 1)forward = forward + Math.signum(forward)*AlignmentConstants.feedforward;
@@ -185,7 +185,7 @@ public class SwerveSubsystem extends SubsystemBase {
     );
   }
 
-  public ChassisSpeeds calcStrafeChassisSpeeds(double[] xya) {
+  public ChassisSpeeds calcStrafeChassisSpeeds(double[] xya, boolean right) {
       double tx = xya[0];
       double ta = xya[2];
 
@@ -193,7 +193,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
       if(ta !=0.0){
         strafeError = tx;
-        double strafe = -AlignmentConstants.kPStrafe * strafeError;
+        double strafe = right ? -AlignmentConstants.kPStrafeRight * strafeError : -AlignmentConstants.kPStrafeLeft * strafeError;
 
         strafe = strafe + Math.signum(strafe)*AlignmentConstants.feedforward;
 
@@ -219,7 +219,7 @@ public class SwerveSubsystem extends SubsystemBase {
         xya = vision.getXYA();
       }
     
-      swerveDrive.drive(this.calcStrafeChassisSpeeds(xya));
+      swerveDrive.drive(this.calcStrafeChassisSpeeds(xya, right));
     }).until(
       () -> Math.abs(strafeError) < AlignmentConstants.strafeTolerance
     );

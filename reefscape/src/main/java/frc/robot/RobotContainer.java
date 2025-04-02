@@ -12,6 +12,7 @@ import frc.robot.subsystems.AlgaeSubsystem.Setpoints;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
+import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem.Setpoint;
 import swervelib.SwerveInputStream;
 
@@ -31,6 +32,9 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.ShootConstants;
 import com.pathplanner.lib.auto.NamedCommands;
+import com.playingwithfusion.TimeOfFlight;
+import com.playingwithfusion.TimeOfFlight.RangingMode;
+
 import frc.robot.Constants.AlignmentConstants;
 
 
@@ -43,10 +47,13 @@ import frc.robot.Constants.AlignmentConstants;
 public class RobotContainer {
     // The robot's subsystems and commands are defined here...
     private final SwerveSubsystem drivebase  = new SwerveSubsystem();
-    private final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();
     private final VisionSubsystem visionSubsystem = new VisionSubsystem();
     private final ClimbSubsystem climbSubsystem = new ClimbSubsystem();
     private final AlgaeSubsystem algaeSubsystem = new AlgaeSubsystem();
+    private TimeOfFlight coralTimeOfFlight;
+    private final ElevatorSubsystem elevatorSubsystem;
+    private final IntakeSubsystem intakeSubsystem;
+
   
     final CommandXboxController driverXbox = new CommandXboxController(0);
     final CommandXboxController supportXbox = new CommandXboxController(1);
@@ -81,21 +88,34 @@ public class RobotContainer {
   
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
+      
+      coralTimeOfFlight = new TimeOfFlight(ShootConstants.kcoralTimeOfFlightPort);
+      coralTimeOfFlight.setRangingMode(RangingMode.Short, 24);
+
+      elevatorSubsystem = new ElevatorSubsystem(coralTimeOfFlight);
+      intakeSubsystem = new IntakeSubsystem(coralTimeOfFlight);
+
+
       // Configure the trigger bindings
       configureBindings();
 
       NamedCommands.registerCommand("moveToL3", elevatorSubsystem.setSetpointCommand(Setpoint.kLevel3));
       NamedCommands.registerCommand("moveToL4", elevatorSubsystem.setSetpointCommand(Setpoint.kLevel4));
       NamedCommands.registerCommand("moveToL1", elevatorSubsystem.setSetpointCommand(Setpoint.kLevel1Intake));
-      NamedCommands.registerCommand("shoot", elevatorSubsystem.runShootCommandWithSwitch());
-      NamedCommands.registerCommand("intake", elevatorSubsystem.intakeCommandWithSwitch());
+      NamedCommands.registerCommand("shoot", intakeSubsystem.runShootCommandWithSwitch());
+      NamedCommands.registerCommand("intake", intakeSubsystem.intakeCommandWithSwitch());
       NamedCommands.registerCommand("AlignRight", drivebase.moveToTag2DCommand(visionSubsystem, true));
+      NamedCommands.registerCommand("algae0", algaeSubsystem.setSetpointCommand(Setpoints.kalgae0));
+      NamedCommands.registerCommand("algae1", algaeSubsystem.setSetpointCommand(Setpoints.kalgae1));
+      NamedCommands.registerCommand("algae2", algaeSubsystem.setSetpointCommand(Setpoints.kalgae2));
       
       // Build an auto chooser. This will use Commands.none() as the default option.
       autoChooser = AutoBuilder.buildAutoChooser();
   
       // Another option that allows you to specify the default auto by its name
       SmartDashboard.putData("Auto Chooser", autoChooser);    
+
+      
     }
   
     /**
@@ -124,6 +144,32 @@ public class RobotContainer {
   
       //sets the gyro to zero
       driverXbox.y().onTrue(Commands.runOnce(drivebase::zeroGyro));
+
+      //shoot the coral L2-L4
+      driverXbox.rightTrigger(OIConstants.kTriggerButtonThreshold)
+      .onTrue(drivebase.alignToTag2DCommand(visionSubsystem, true));
+
+      //shoot the coral into L1
+      driverXbox.leftTrigger(OIConstants.kTriggerButtonThreshold)
+      .onTrue(drivebase.alignToTag2DCommand(visionSubsystem, false));
+
+      //left on D-pad aligns to the right reef post 
+      driverXbox.povRight().onTrue(drivebase.moveToTag2DCommand(visionSubsystem, true));
+
+      //left on D-pad aligns to the left reef post 
+      driverXbox.povLeft().onTrue(drivebase.moveToTag2DCommand(visionSubsystem, false));
+
+      //left bumper moves the algae arm  to starting position
+      driverXbox.leftBumper().onTrue(algaeSubsystem.setSetpointCommand(Setpoints.kalgae1));
+  
+      //right bumper moves the algae arm to second setpoint
+      driverXbox.rightBumper().onTrue(algaeSubsystem.setSetpointCommand(Setpoints.kalgae2));
+  
+      //right bumper moves the algae arm to third/highest setpoint
+      driverXbox.back().onTrue(algaeSubsystem.setSetpointCommand(Setpoints.kalgae0));
+
+      ///lijSDFPOaiedjbfoj
+      driverXbox.povUp().whileTrue(drivebase.moveToTagCommand(0.15,visionSubsystem));
   
       //X button sets the elevator to level 1 
       supportXbox.a().onTrue(elevatorSubsystem.setSetpointCommand(Setpoint.kLevel1Intake));
@@ -136,56 +182,32 @@ public class RobotContainer {
   
       //Y button sets the elevator to Level 4
       supportXbox.y().onTrue(elevatorSubsystem.setSetpointCommand(Setpoint.kLevel4));
-    
-      //shoot the coral L2-L4
-      driverXbox.rightTrigger(OIConstants.kTriggerButtonThreshold)
-      .onTrue(drivebase.alignToTag2DCommand(visionSubsystem, true));
 
       //shoot the coral L2-L4
       supportXbox.rightTrigger(OIConstants.kTriggerButtonThreshold)
-      .whileTrue(elevatorSubsystem.runShootCommand());
-
-      //shoot the coral into L1
-      driverXbox.leftTrigger(OIConstants.kTriggerButtonThreshold)
-      .onTrue(drivebase.alignToTag2DCommand(visionSubsystem, false));
+      .whileTrue(intakeSubsystem.runShootCommand());
 
       //shoot the coral into L1
       supportXbox.leftTrigger(OIConstants.kTriggerButtonThreshold)
-      .onTrue(elevatorSubsystem.intakeCommandWithSwitch());
+      .onTrue(intakeSubsystem.intakeCommandWithSwitch());
 
       //intakes the coral a  bit 
-      supportXbox.leftBumper().whileTrue(elevatorSubsystem.intakeCommand());
+      supportXbox.leftBumper().whileTrue(intakeSubsystem.intakeCommand());
 
       //intakes the coral a bit
-      supportXbox.rightBumper().whileTrue(elevatorSubsystem.reverseIntakeCommand());
+      supportXbox.rightBumper().whileTrue(intakeSubsystem.reverseIntakeCommand());
 
-      driverXbox.povRight().onTrue(drivebase.moveToTag2DCommand(visionSubsystem, true));
-
-      driverXbox.povLeft().onTrue(drivebase.moveToTag2DCommand(visionSubsystem, false));
-
+      //climb up
       supportXbox.povUp().whileTrue(climbSubsystem.climbCommand());
 
+      //climb down
       supportXbox.povDown().whileTrue(climbSubsystem.climbDownCommand());
-
-      // supportXbox.povLeft().whileTrue(algaeSubsystem.algaeUpCommand());
-
-      // supportXbox.povRight().whileTrue(algaeSubsystem.algaeDownCommand());
 
       //the inatkes retracts for endgame
       supportXbox.back().whileTrue(elevatorSubsystem.retractIntake());
 
+      //unretracts the intake
       supportXbox.start().whileTrue(elevatorSubsystem.unretractIntake());
-
-      //left bumper moves the algae arm  to starting position
-      driverXbox.leftBumper().onTrue(algaeSubsystem.setSetpointCommand(Setpoints.kalgae1));
-  
-      //right bumper moves the algae arm to second setpoint
-      driverXbox.rightBumper().onTrue(algaeSubsystem.setSetpointCommand(Setpoints.kalgae2));
-  
-      //right bumper moves the algae arm to third/highest setpoint
-      driverXbox.back().onTrue(algaeSubsystem.setSetpointCommand(Setpoints.kalgae0));
-
-      driverXbox.povUp().whileTrue(drivebase.moveToTagCommand(0.15,visionSubsystem));
     }
   
   /**

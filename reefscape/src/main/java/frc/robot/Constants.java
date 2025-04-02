@@ -95,7 +95,8 @@ public final class Constants
   }
 
   public static final class AlignmentConstants{
-    public static final double kPStrafe = 0.075;
+    public static final double kPStrafeLeft = 0.055;
+    public static final double kPStrafeRight = 0.075;
     public static final double kPForwardRight = 0.06; //.15
     public static final double kPForwardLeft = 0.15; //.15
     public static final double feedforward = 0.01; //.01
@@ -127,8 +128,7 @@ public final class Constants
 
   public static final class Climb{
     public static final int kclimbMotorCanId = 13;
-    public static final double kclimbPower = 0.35;
-
+    public static final double kclimbPower = 0.55;
     public static final double kclimbDownPower = -0.65;
   }
 

@@ -7,13 +7,31 @@
         {
           "type": "path",
           "data": {
-            "pathName": "L4 DF 1st "
+            "pathName": "left L4 DF 1st "
           }
         },
         {
           "type": "wait",
           "data": {
-            "waitTime": 1.0
+            "waitTime": 0.5
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "moveToL4"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.1
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "left L4 DF 2nd "
           }
         },
         {
@@ -21,15 +39,9 @@
           "data": {
             "commands": [
               {
-                "type": "named",
-                "data": {
-                  "name": "moveToL4"
-                }
-              },
-              {
                 "type": "wait",
                 "data": {
-                  "waitTime": 1.0
+                  "waitTime": 0.5
                 }
               },
               {
